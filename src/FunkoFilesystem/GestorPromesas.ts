@@ -9,7 +9,7 @@ import path from 'path';
  * Cada usuario tiene su propia carpeta en la que se guardan los archivos.
  * Almaceno los datos de forma temporal en un Map.
  */
-export default class Gestor {
+export default class GestorPromesas {
     private databaseDir: string;
     private _almacenMap = new Map<number, Funko>();
 
