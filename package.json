@@ -19,11 +19,13 @@
   "description": "Práctica de la asignatura DSI en el curso 2024/2025",
   "dependencies": {
     "chalk": "^5.4.1",
+    "express": "^5.1.0",
     "tsc-watch": "^6.2.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.11",
     "@types/yargs": "^17.0.33",

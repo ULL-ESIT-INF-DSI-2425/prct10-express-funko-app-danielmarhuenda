@@ -9,7 +9,7 @@ import path from 'path';
  * Cada usuario tiene su propia carpeta en la que se guardan los archivos.
  * Almaceno los datos de forma temporal en un Map.
  */
-export default class GestorPromesas {
+export default class Gestor {
     private databaseDir: string;
     private _almacenMap = new Map<number, Funko>();
 
@@ -98,72 +98,80 @@ export default class GestorPromesas {
      * Añadir un nuevo Funko a la base de datos.
      * @param funko  Objeto Funko a añadir.
      */
-    add(funko: Funko, callback: (err?: Error) => void): void {
+    add = (funko:Funko) => {
+        return new Promise<string>((resolve, reject) => {
         if (this._almacenMap.has(funko.ID)) {
-          callback(new Error(`Error, ID ${funko.ID} ya está en uso`));
+            reject(`Error, ID ${funko.ID} ya está en uso`)
         } else {
-          this._almacenMap.set(funko.ID, funko);
-          this.storeEntidad(funko, (err) => {
-            if (err) {
-              callback(err);
-            } else {
-              callback();
-            }
-          });
+            this._almacenMap.set(funko.ID, funko);
+            this.storeEntidad(funko, (err) => {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(`Funko ${funko.ID} añadido correctamente`);
+              }
+            });
         }
-      }
+        });
+    };
 
     /**
      * Eliminar un Funko de la base de datos.
      * @param ID  ID del Funko a eliminar.
      */
-    remove(ID: number, callback: (err?: Error) => void): void {
-        if (!this._almacenMap.has(ID)) {
-            callback(new Error(`Funko con ID ${ID} no encontrado.`));
-        }else {
-            this._almacenMap.delete(ID);
-            const filePath = path.join(this.databaseDir, `${ID}.json`);
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    callback(new Error(`Error al eliminar el archivo ${filePath}: ${err.message}`));
-                } else {
-                    callback();
-                }
-            });
-        }
-    }
+    remove = (ID: number) => {
+        return new Promise<string>((resolve, reject) => {
+            if (!this._almacenMap.has(ID)) {
+                reject(`Funko con ID ${ID} no encontrado.`);
+            } else {
+                this._almacenMap.delete(ID);
+                const filePath = path.join(this.databaseDir, `${ID}.json`);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        reject(`Error al eliminar el archivo ${filePath}: ${err.message}`);
+                    } else {
+                        resolve(`Funko ${ID} eliminado correctamente`);
+                    }
+                });
+            }
+        });
+    };
 
     /**
      * Obtener un Funko de la base de datos.
      * @param ID  ID del Funko a obtener.
      */
-    get(ID: number, callback: (err?: Error, funko?: Funko) => void): void {
-        const funko = this._almacenMap.get(ID);
-        if (funko) {
-            callback(undefined, funko);
-        } else {
-            callback(new Error(`Funko con ID ${ID} no encontrado.`));
-        }
-    }
+    get = (ID: number) => {
+        return new Promise<Funko>((resolve, reject) => {
+            const funko = this._almacenMap.get(ID);
+            if (funko) {
+                resolve(funko);
+            } else {
+                reject(`Funko con ID ${ID} no encontrado.`);
+            }
+        });
+    };
 
     /**
      * Actualizar un Funko de la base de datos.
      * @param funko  Objeto Funko a actualizar.
      */
-    update(funko: Funko, callback: (err?: Error) => void): void {
-        if (!this.almacenMap.has(funko.ID)) {
-          callback(new Error(`Funko con ID ${funko.ID} no encontrado.`));
-        } else {
-          this._almacenMap.set(funko.ID, funko);
-          this.storeEntidad(funko, (err) => {
-            if (err) {
-              callback(err);
+    update = (funko: Funko) => {
+        return new Promise<string>((resolve, reject) => {
+            if (!this.almacenMap.has(funko.ID)) {
+                reject(`Funko con ID ${funko.ID} no encontrado.`);
             } else {
-              callback();
+                this._almacenMap.set(funko.ID, funko);
+                this.storeEntidad(funko, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(`Funko ${funko.ID} actualizado correctamente`);
+                    }
+                });
             }
-          });
-        }
-    }
+        });
+    };
 
     /**
      * Leer un Funko de la base de datos.
@@ -171,19 +179,26 @@ export default class GestorPromesas {
      * Dejo la función por si acaso.
      * @param ID  ID del Funko a leer
      */
-    read(ID: number, callback: (err?: Error, funko?: Funko) => void): void {
-        this.get(ID, (err, funko) => {
-            if (err) {
-                callback(err);
-            } else {
+    read = (ID: number) => {
+        return new Promise<Funko>((resolve, reject) => {
+            this.get(ID).then((funko) => {
                 if (funko) {
-                    //let funkostring:string = `ID: ${funko.ID}\nNombre: ${funko.nombre}\nDescripción: ${funko.descripcion}\nTipo: ${funko.tipo}\nGénero: ${funko.genero}\nFranquicia: ${funko.franquicia}\nNúmero: ${funko.numero}\nExclusivo: ${funko.exclusivo}\nCaracterísticas: ${funko.caracteristicas}\nMercado: ${funko.mercado}`;
-                    callback(undefined, funko);
+                    resolve(funko);
                 } else {
-                    callback(new Error(`Funko con ID ${ID} no encontrado.`));
+                    reject(`Funko con ID ${ID} no encontrado.`);
                 }
-            }
+            }).catch((err) => {
+                reject(err);
+            });
         });
+    };
+
+    public readtodo():Funko[] {
+        let funkos: Funko[] = [];
+        this._almacenMap.forEach((funko) => {
+            funkos.push(funko);
+        });
+        return funkos;
     }
 
     /**

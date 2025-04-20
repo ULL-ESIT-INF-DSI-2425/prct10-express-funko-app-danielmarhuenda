@@ -1,0 +1,12 @@
+{
+  "ID": 1,
+  "nombre": "nose",
+  "descripcion": "descrip",
+  "tipo": "Pop!",
+  "genero": "Animación",
+  "franquicia": "franquisia",
+  "numero": 333,
+  "exclusivo": false,
+  "caracteristicas": "ninguna",
+  "mercado": 999
+}
