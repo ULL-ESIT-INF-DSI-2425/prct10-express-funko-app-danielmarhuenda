@@ -15,23 +15,6 @@ app.get("/notes", (req, res) => {
     });
 
   } else {
-    /**
-    readNote(req.query.title as string, (err, data) => {
-      if (err) {
-        res.send({
-          error: err,
-        });
-      } else if (!data!.success) {
-        res.send({
-          error: `No note was found`,
-        });
-      } else {
-        res.send({
-          notes: data!.notes,
-        });
-      }
-    });
-    */
     readNote(req.query.title as string, req.query.ruta as string).then((data) => {
       if (!data!.success) {
         console.log("Se va a enviar un error");
