@@ -32,7 +32,3 @@ const loadNotes = (ruta:string) => {
     });
   });
 };
-
-
-
-
