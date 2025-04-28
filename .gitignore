@@ -3,6 +3,11 @@ node_modules/
 dist/
 coverage/
 
+#carpeta de mongodb
+*mongodb-data/
+mongodb/
+mongodb
+
 # Compiled source #
 ###################
 *.com
